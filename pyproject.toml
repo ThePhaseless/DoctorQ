@@ -1,7 +1,7 @@
 [project]
-name = "doctorq"
+name = "DoctorQ"
 version = "0.1.0"
-description = "Add your description here"
+description = "Queue management system for doctors"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
