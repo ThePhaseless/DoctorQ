@@ -1,11 +1,14 @@
 import datetime
 import enum
+
 from pydantic import BaseModel, Field
 
+
 class Gender(str, enum.Enum):
-    MALE = "male"
-    FEMALE = "female"
-    OTHER = "other"
+    MALE = "MALE"
+    FEMALE = "FEMALE"
+    OTHER = "OTHER"
+
 
 class Patient(BaseModel):
     first_name: str
