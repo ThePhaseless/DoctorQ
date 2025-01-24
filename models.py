@@ -12,4 +12,5 @@ class Patient(BaseModel):
     age: int
     pesel: str
     gender: Gender
+    is_priority: bool
     appointment_time: datetime.time
