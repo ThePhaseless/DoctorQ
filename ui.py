@@ -1,4 +1,5 @@
 import datetime
+from zoneinfo import ZoneInfo
 
 from nicegui import ui
 
@@ -50,32 +51,17 @@ with ui.row():
             .classes("inline-flex")
             .props("dense outlined")
         )
-        appointment_time = ui.time().classes("inline-flex").props("dense outlined")
 
         def add_patient():
-            time = datetime.datetime.now()
-            if appointment_time.value.split(":")[0]:
-                time.replace(
-                    hour=int(appointment_time.value.split(":")[0]),
-                    minute=int(appointment_time.value.split(":")[1] or 0),
-                )
             new_patient = Patient(
                 first_name=name.value,
                 last_name=surname.value,
                 pesel=pesel.value,
                 age=age.value,
                 gender=Gender[gender.value or ""],
-                appointment_time=time,
+                appointment_time=datetime.datetime.now(ZoneInfo("Europe/Warsaw")),
             )
-            if len(queue.list_patients()) > 0:
-                curr_patient = queue.list_patients()[
-                    position.value if (is_priority.value and position.value) else -1
-                ]
-                if curr_patient.appointment_time > new_patient.appointment_time:
-                    raise ValueError(
-                        "Patient with earlier appointment time already exists."
-                    )
-            if is_priority.value and position.value:
+            if is_priority.value and position.value is not None:
                 queue.add_priority_patient(new_patient, position.value)
                 is_priority.set_value(None)
             else:
@@ -88,7 +74,6 @@ with ui.row():
             pesel.set_value(None)
             age.set_value(None)
             gender.set_value(None)
-            appointment_time.set_value(None)
             patient_rows = [  # type: ignore
                 {
                     **patient.model_dump(),
