@@ -77,13 +77,29 @@ with ui.row():
             age.set_value(None)
             gender.set_value(None)
             appointment_time.set_value(None)
+            patient_rows = [  # type: ignore
+                {
+                    **patient.model_dump(),
+                    "gender": patient.gender.polish(),
+                    "appointment_date": patient.appointment_time.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    ),
+                }
+                for patient in queue.list_patients()
+            ]
             table.update_rows(  # type: ignore
-                [patient.model_dump() for patient in queue.list_patients()]
+                patient_rows
             )
+            ui.notify("Dodano pacjenta")
 
         ui.button("Zatwierdź", on_click=add_patient)
 columns = [
-    {"name": "Imie", "field": "first_name", "label": "Imię"},{"name": "Nazwisko", "field":"last_name", "label": "Nazwisko"},{"name": "PESEL", "field":"pesel", "label": "PESEL"},{"name": "Wiek", "field":"age", "label": "Wiek"}, {"name": "Płeć", "field":"gender", "label": "Płeć"},{"name": "Data", "field":"appointment_date", "label": "Data"},
+    {"name": "Imie", "field": "first_name", "label": "Imię"},
+    {"name": "Nazwisko", "field": "last_name", "label": "Nazwisko"},
+    {"name": "PESEL", "field": "pesel", "label": "PESEL"},
+    {"name": "Wiek", "field": "age", "label": "Wiek"},
+    {"name": "Płeć", "field": "gender", "label": "Płeć"},
+    {"name": "Data", "field": "appointment_date", "label": "Data"},
 ]
 
 table = ui.table(columns=columns, rows=[x.model_dump() for x in queue.list_patients()])
