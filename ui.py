@@ -73,7 +73,7 @@ with ui.row():
             surname.set_value(None)
             pesel.set_value(None)
             age.set_value(None)
-            gender.set_value(None)
+            gender.set_value(Gender.MALE)
             patient_rows = [  # type: ignore
                 {
                     **patient.model_dump(),
@@ -108,7 +108,7 @@ def delete_patient():
         {
             **patient.model_dump(),
             "gender": patient.gender.polish(),
-            "appointment_date": patient.appointment_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "appointment_date": patient.appointment_time.strftime("%Y-%m-%d %H:%M"),
         }
         for patient in queue.list_patients()
     ]
