@@ -29,7 +29,8 @@ with ui.row():
                 "PESEL",
                 validation={
                     "musi być 11 cyfr": lambda e: not e
-                    or (len(e) == 11 and e.isnumeric())
+                    or (len(e) == 11 and e.isnumeric()),
+                    "PESEL istnieje": lambda e: e not in [x.pesel for x in queue.list_patients()]
                 },
             )
             .classes("inline-flex")
@@ -114,4 +115,23 @@ columns = [
 ]
 
 table = ui.table(columns=columns, rows=[x.model_dump() for x in queue.list_patients()])
+def delete_patient():
+    queue.remove_patient(pesel_do_usuniecia.value)
+    patient_rows = [  # type: ignore
+        {
+            **patient.model_dump(),
+            "gender": patient.gender.polish(),
+            "appointment_date": patient.appointment_time.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+        }
+        for patient in queue.list_patients()
+    ]
+    table.update_rows(  # type: ignore
+        patient_rows
+    )
+    pesel_do_usuniecia.set_value(None)
+
+pesel_do_usuniecia = ui.input("wpisz PESEL do usunięcia")
+ui.button("usun", on_click=delete_patient)
 ui.run()
