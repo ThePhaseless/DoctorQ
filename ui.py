@@ -83,7 +83,7 @@ with ui.row():
 
         ui.button("Zatwierdź", on_click=add_patient)
 columns = [
-    {"name": "Imie", "field": "first_name"},
+    {"name": "Imie", "field": "first_name", "label": "Imię"},{"name": "Nazwisko", "field":"last_name", "label": "Nazwisko"},{"name": "PESEL", "field":"pesel", "label": "PESEL"},{"name": "Wiek", "field":"age", "label": "Wiek"}, {"name": "Płeć", "field":"gender", "label": "Płeć"},{"name": "Data", "field":"appointment_date", "label": "Data"},
 ]
 
 table = ui.table(columns=columns, rows=[x.model_dump() for x in queue.list_patients()])
