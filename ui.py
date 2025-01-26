@@ -28,7 +28,10 @@ with ui.row():
         pesel = (
             ui.input(
                 "PESEL",
-                validation={"musi być 11 cyfr": lambda e: not e or (len(e) == 11 and e.isnumeric())},
+                validation={
+                    "musi być 11 cyfr": lambda e: not e
+                    or (len(e) == 11 and e.isnumeric())
+                },
             )
             .classes("inline-flex")
             .props("dense outlined")
@@ -49,7 +52,7 @@ with ui.row():
         )
         appointment_time = ui.time().classes("inline-flex").props("dense outlined")
 
-        async def add_patient():
+        def add_patient():
             patient = Patient(
                 first_name=name.value,
                 last_name=surname.value,
@@ -63,20 +66,24 @@ with ui.row():
                 ),
             )
             ui.notify(f"Dodano pacjenta: {patient.first_name} {patient.last_name}")
-            if is_priority and position:
+            if is_priority.value and position.value:
                 queue.add_priority_patient(patient, position.value)
                 is_priority.set_value(None)
+            else:
+                queue.add_patient(patient)
             name.set_value(None)
             surname.set_value(None)
             pesel.set_value(None)
             age.set_value(None)
             gender.set_value(None)
             appointment_time.set_value(None)
-            await table.get_computed_rows()
+            table.update_rows(  # type: ignore
+                [patient.model_dump() for patient in queue.list_patients()]
+            )
 
         ui.button("Zatwierdź", on_click=add_patient)
 columns = [
-    {'name': 'name', 'label': 'Name'}
+    {"name": "Imie", "field": "first_name"},
 ]
 
 table = ui.table(columns=columns, rows=[x.model_dump() for x in queue.list_patients()])
