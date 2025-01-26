@@ -9,6 +9,15 @@ class Gender(str, enum.Enum):
     FEMALE = "FEMALE"
     OTHER = "OTHER"
 
+    def polish(self) -> str:
+        match self:
+            case Gender.MALE:
+                return "M"
+            case Gender.FEMALE:
+                return "K"
+            case Gender.OTHER:
+                return "O"
+
 
 class Patient(BaseModel):
     first_name: str
