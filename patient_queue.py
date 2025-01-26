@@ -1,12 +1,13 @@
-import datetime
 from typing import Optional
 
 from models import Patient
+
 
 class Node:
     def __init__(self, patient: Patient):
         self.patient: Patient = patient
         self.next: Optional[Node] = None
+
 
 class PatientQueue:
     def __init__(self):
@@ -36,9 +37,7 @@ class PatientQueue:
         prev = None
         current_position = 0
 
-        while current and current_position < position:
-            if (prev and prev.patient):
-                prev.patient.appointment_time += datetime.timedelta(minutes=5)
+        while current and current_position < position - 1:
             prev = current
             current = current.next
             current_position += 1
