@@ -20,7 +20,7 @@ class PatientQueue:
         if not self.head:
             # Round to the nearest 30 minutes
             new_node.patient.appointment_time += datetime.timedelta(
-                minutes=60 - new_node.patient.appointment_time.minute
+                minutes=60 - new_node.patient.appointment_time.minute, hours=1
             )
             self.head = new_node
         else:

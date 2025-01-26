@@ -1,5 +1,4 @@
 import datetime
-from zoneinfo import ZoneInfo
 
 from nicegui import ui
 
@@ -31,7 +30,8 @@ with ui.row():
                 validation={
                     "musi być 11 cyfr": lambda e: not e
                     or (len(e) == 11 and e.isnumeric()),
-                    "PESEL istnieje": lambda e: e not in [x.pesel for x in queue.list_patients()]
+                    "PESEL istnieje": lambda e: e
+                    not in [x.pesel for x in queue.list_patients()],
                 },
             )
             .classes("inline-flex")
@@ -59,7 +59,7 @@ with ui.row():
                 pesel=pesel.value,
                 age=age.value,
                 gender=Gender[gender.value or ""],
-                appointment_time=datetime.datetime.now(ZoneInfo("Europe/Warsaw")),
+                appointment_time=datetime.datetime.now(),
             )
             if is_priority.value and position.value is not None:
                 queue.add_priority_patient(new_patient, position.value)
@@ -100,15 +100,15 @@ columns = [
 ]
 
 table = ui.table(columns=columns, rows=[x.model_dump() for x in queue.list_patients()])
+
+
 def delete_patient():
     queue.remove_patient(pesel_do_usuniecia.value)
     patient_rows = [  # type: ignore
         {
             **patient.model_dump(),
             "gender": patient.gender.polish(),
-            "appointment_date": patient.appointment_time.strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
+            "appointment_date": patient.appointment_time.strftime("%Y-%m-%d %H:%M:%S"),
         }
         for patient in queue.list_patients()
     ]
@@ -116,6 +116,7 @@ def delete_patient():
         patient_rows
     )
     pesel_do_usuniecia.set_value(None)
+
 
 pesel_do_usuniecia = ui.input("wpisz PESEL do usunięcia")
 ui.button("usun", on_click=delete_patient)
