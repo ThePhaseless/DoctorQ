@@ -66,13 +66,14 @@ with ui.row():
                 gender=Gender[gender.value or ""],
                 appointment_time=time,
             )
-            curr_patient = queue.list_patients()[
-                position.value if (is_priority.value and position.value) else -1
-            ]
-            if curr_patient.appointment_time > new_patient.appointment_time:
-                raise ValueError(
-                    "Patient with earlier appointment time already exists."
-                )
+            if len(queue.list_patients()) > 0:
+                curr_patient = queue.list_patients()[
+                    position.value if (is_priority.value and position.value) else -1
+                ]
+                if curr_patient.appointment_time > new_patient.appointment_time:
+                    raise ValueError(
+                        "Patient with earlier appointment time already exists."
+                    )
             if is_priority.value and position.value:
                 queue.add_priority_patient(new_patient, position.value)
                 is_priority.set_value(None)
