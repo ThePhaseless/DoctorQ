@@ -15,7 +15,6 @@ with ui.row():
     with ui.column():
         is_priority = ui.toggle(
             {False: "Zwykły", True: "Priorytet"},
-            on_change=lambda e: ui.notify(e),
             value=False,
         )
         with ui.column().bind_visibility_from(is_priority, "value"):
@@ -53,24 +52,35 @@ with ui.row():
         appointment_time = ui.time().classes("inline-flex").props("dense outlined")
 
         def add_patient():
-            patient = Patient(
+            time = datetime.datetime.now()
+            if appointment_time.value.split(":")[0]:
+                time.replace(
+                    hour=int(appointment_time.value.split(":")[0]),
+                    minute=int(appointment_time.value.split(":")[1] or 0),
+                )
+            new_patient = Patient(
                 first_name=name.value,
                 last_name=surname.value,
                 pesel=pesel.value,
                 age=age.value,
                 gender=Gender[gender.value or ""],
-                appointment_time=datetime.datetime.today()
-                + datetime.timedelta(
-                    hours=int(appointment_time.value.split(":")[0] or 0),
-                    minutes=int(appointment_time.value.split(":")[1] or 0),
-                ),
+                appointment_time=time,
             )
-            ui.notify(f"Dodano pacjenta: {patient.first_name} {patient.last_name}")
+            curr_patient = queue.list_patients()[
+                position.value if (is_priority.value and position.value) else -1
+            ]
+            if curr_patient.appointment_time > new_patient.appointment_time:
+                raise ValueError(
+                    "Patient with earlier appointment time already exists."
+                )
             if is_priority.value and position.value:
-                queue.add_priority_patient(patient, position.value)
+                queue.add_priority_patient(new_patient, position.value)
                 is_priority.set_value(None)
             else:
-                queue.add_patient(patient)
+                queue.add_patient(new_patient)
+            ui.notify(
+                f"Dodano pacjenta: {new_patient.first_name} {new_patient.last_name}"
+            )
             name.set_value(None)
             surname.set_value(None)
             pesel.set_value(None)
