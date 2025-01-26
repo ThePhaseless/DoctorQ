@@ -93,7 +93,7 @@ with ui.row():
                     **patient.model_dump(),
                     "gender": patient.gender.polish(),
                     "appointment_date": patient.appointment_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
+                        "%Y-%m-%d %H:%M"
                     ),
                 }
                 for patient in queue.list_patients()
