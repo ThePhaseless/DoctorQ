@@ -8,4 +8,4 @@ Należy zaprojektować aplikację umożliwiającą dodanie pacjenta do listy ocz
 
 ## Współtwórca
 
-[@Midas132](https://github.com/Midas132)
+[@Midas132](github.com/Midas132)
