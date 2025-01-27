@@ -28,7 +28,7 @@ with ui.row():
             ui.input(
                 "PESEL",
                 validation={
-                    "musi być 11 cyfr": lambda e: not e
+                    "musi być 11 cyfr": lambda e: e is None
                     or (len(e) == 11 and e.isnumeric()),
                     "PESEL istnieje": lambda e: e
                     not in [x.pesel for x in queue.list_patients()],
@@ -37,7 +37,14 @@ with ui.row():
             .classes("inline-flex")
             .props("dense outlined")
         )
-        age = ui.number("Wiek").classes("inline-flex").props("dense outlined")
+        age = (
+            ui.number(
+                "Wiek",
+                validation={"musi być wiekszy od 0": lambda e: e is None or int(e) > 0},
+            )
+            .classes("inline-flex")
+            .props("dense outlined")
+        )
         gender = (
             ui.select(
                 {
